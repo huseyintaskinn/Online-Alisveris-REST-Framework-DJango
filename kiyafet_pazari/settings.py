@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 import environ
 import ast
+from datetime import timedelta
 
 env = environ.Env()
 environ.Env.read_env()
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     'kiyafetler.apps.KiyafetlerConfig',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -136,4 +138,17 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 REST_FRAMEWORK = {
     # 'DEFAULT_PAGINATION_CLASS': 'kiyafetler.api.pagination.SmallPagination',
     # 'PAGE_SIZE': 20
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "SLIDING_TOKEN_LIFETIME": timedelta(days=30),
+    "SLIDING_TOKEN_REFRESH_DELTA": timedelta(days=2),
 }

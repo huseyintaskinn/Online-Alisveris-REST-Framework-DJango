@@ -18,9 +18,10 @@ from django.urls import path, include
 from kiyafetler import views
 from django.conf import settings
 from django.conf.urls.static import static
+from kiyafetler import views as kiyafetler_views
 
 urlpatterns = [
-    path('', views.home),
+    path('', kiyafetler_views.KiyafetList.as_view(), name='ana-sayfa'),
     path('admin/', admin.site.urls),
     path('api/', include('kiyafetler.api.urls')),
     path('api-auth/', include('rest_framework.urls')),

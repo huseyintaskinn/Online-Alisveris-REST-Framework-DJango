@@ -1,37 +1,28 @@
 from django.shortcuts import render
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from kiyafetler.api.serializers import KiyafetSerializer
-from kiyafetler.models import Kiyafet
 import requests
 
-@api_view(['GET'])
-def home(request):
-    # Model ile verileri alabilirdim ama API kullanarak verileri çektim
-    # data = Kiyafet.objects.all()  
-    url = 'http://127.0.0.1:8000/api/Kiyafetler/'
-    response = requests.get(url)
- 
-    if response.status_code != 200:
-        print('Hatalı istek yapıldı', response.status_code)
-        return
+class KiyafetList(APIView):
+    def get(self, request):
+        url = 'http://127.0.0.1:8000/api/Kiyafetler/'
+        response = requests.get(url)
 
-    data = response.json()
+        if response.status_code != 200:
+            print('Hatalı istek yapıldı', response.status_code)
+            return Response({"error": "Hatalı istek yapıldı"}, status=response.status_code)
 
-    
-    ortalamalar = []
+        data = response.json()
+        for kiyafet in data:
+            adet = len(kiyafet['Puanlar'])
+            toplam = sum(puan['degerlendirme'] for puan in kiyafet['Puanlar'])
+            
+            try:
+                ort = toplam / adet
+            except ZeroDivisionError:
+                ort = 0  # veya istediğiniz bir değer
 
-    for kiyafet in data:
-        adet = 0
-        ort = 0
-        toplam = 0
-        for puan in kiyafet['Puanlar']:
-            adet += 1 
-            toplam += puan['degerlendirme']
-        if adet != 0:  # Sıfıra bölme hatasını engellemek için kontrol ekleniyor
-            ort = toplam / adet
-
-        kiyafet['adet'] = adet
-        kiyafet['ort'] = ort
-
-    return render(request, 'index.html', {'data': data})
+            kiyafet['adet'] = adet
+            kiyafet['ort'] = ort
+        
+        return render(request, 'index.html', {'data': data})

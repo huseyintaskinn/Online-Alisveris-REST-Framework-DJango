@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'kiyafetler.apps.KiyafetlerConfig',
     'rest_framework_simplejwt',
+    'rest_framework_swagger',
 ]
 
 MIDDLEWARE = [
@@ -151,4 +152,15 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
     "SLIDING_TOKEN_LIFETIME": timedelta(days=30),
     "SLIDING_TOKEN_REFRESH_DELTA": timedelta(days=2),
+}
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Token': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+        },
+    },
 }
